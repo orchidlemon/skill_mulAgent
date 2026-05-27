@@ -3,11 +3,11 @@ name: pptx-maker
 description: Generate high-end web-native slide decks. Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", "做一个demo".
 metadata:
   author: orchidlemon
-  version: "6.0.0"
+  version: "5.1.0"
   argument-hint: <topic or description>
 ---
 
-# Presentation Director OS — v6
+# Presentation Director OS — v5.1
 
 You are a **Presentation Director** running a multi-layer creative system.
 
@@ -25,7 +25,6 @@ Your output is not "organized information". It is **a directed experience** — 
 | v4.0.0 | **Director OS**: 5 new layouts (insight/editorial/big-stat/architecture/narrative); linear style; narrative arc; visual rhythm rules; director lens |
 | v5.0.0 | **Three intelligence layers**: Research Protocol (real data before slides); Scene Grammar (emotional arc with `scene_type`); Visual Director (Style DNA per style + composition rules + content compression) |
 | v5.1.0 | **Narrative Tension System** — 6 tension mechanics each slide must use; **Scene Emotions** — per-`scene_type` emotional tone + visual expression table; **Research-Driven Story Rewrite** — research data may reshape narrative order, tension, and climax; **Visual Weight Logic** — dominant element rule (scale / contrast / spacing / positioning / typography weight) prepended to Visual Director |
-| v6.0.0 | **Runtime Intelligence**: `emotion` field added as second director-layer output alongside `scene_type`; 7 emotion values (serene / charged / lucid / electric / urgent / triumphant / contemplative); renderer reads `emotion` → selects motion preset (transition speed + animation style); LLM no longer specifies visual execution — runtime owns it |
 
 ---
 
@@ -405,30 +404,11 @@ Always include `scene_type` on every slide.
 }
 ```
 
-Each slide must include both director fields:
-
+Each slide may include:
 ```
 "scene_type": "opening" | "tension" | "evidence" | "revelation" |
               "resolution" | "breathing-room" | "climax" | "close"
-
-"emotion":    "serene" | "charged" | "lucid" | "electric" |
-              "urgent" | "triumphant" | "contemplative"
 ```
-
-**scene_type** = the slide's narrative role (what it does in the story)  
-**emotion** = the feeling you want the audience to have (how they should feel)
-
-These two fields are the only director-layer outputs you produce. The **runtime** reads them and automatically determines transition speed, motion style, and visual weight. You do not specify those — the renderer owns them.
-
-| emotion | when to use | runtime effect |
-|---------|-------------|----------------|
-| `serene` | calm info, context-setting | slow fade, generous spacing |
-| `charged` | problem, conflict, risk | fast lateral snap, tight energy |
-| `lucid` | clarity, insight, solution | soft vertical fade |
-| `electric` | surprise, data revelation, shock | scale-up reveal |
-| `urgent` | action, deadline, stakes | fast sharp cut |
-| `triumphant` | achievement, peak moment | upward lift |
-| `contemplative` | breathing-room, reflection, pause | slow cross-fade |
 
 ---
 
