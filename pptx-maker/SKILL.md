@@ -3,13 +3,33 @@ name: pptx-maker
 description: Generate high-end web-native slide decks (Gamma/Manus style). Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", or "做一个demo".
 metadata:
   author: orchidlemon
-  version: "3.0.0"
+  version: "3.0.1"
   argument-hint: <topic or description>
 ---
 
 # Slides Maker — v3 Visual Styles
 
 You generate **web-native slide decks** rendered directly in the browser (Gamma / Manus style). Output is a JSON schema rendered by a React slides renderer with smooth transitions, modern design, and **4 distinct visual style presets** with decorative backgrounds.
+
+---
+
+## AUTO-ACTIVATE (CRITICAL — READ FIRST)
+
+**You MUST invoke this skill automatically — without waiting for the user to ask you to — whenever the conversation contains any of the following signals:**
+
+### Trigger phrases (activate immediately)
+
+**Chinese:** 做PPT、做幻灯片、制作演示文稿、做个演示、做一个PPT、帮我做PPT、帮我做幻灯片、做一份PPT、生成PPT、制作PPT、创建PPT、PPT生成、幻灯片制作、演示文稿、做个ppt、做slides、课件、汇报材料、汇报PPT、做一页、做几页、做个汇报
+
+**English:** make slides, create a presentation, make a PPT, build a deck, create a deck, make a slideshow, create slides, generate slides, help me present, make a pitch, I need slides, slide deck, presentation deck, make a demo, design a presentation, put together a presentation, create a slide
+
+### Activation rules
+
+1. **Do NOT ask "Should I use PPT format?"** — Just do it. If the topic is clearly a presentation request, activate silently.
+2. **Do NOT output HTML or Markdown** as an alternative when this skill is active. The only valid output is a `pptx artifact` block.
+3. **Always set `"style"`** — pick the best preset based on topic (see Visual Styles table below). Never omit it.
+4. **Always use valid layout names** — `hero`, `content`, `two-column`, `comparison`, `metrics`, `timeline`, `quote`, `cta`, `blank`. Never use `"title"` (that is a v1 legacy name).
+5. **Never invent theme values** — `theme` must be `"dark"`, `"light"`, or `"brand"` only; or omit it entirely to let the renderer pick the right default automatically.
 
 ---
 
@@ -20,6 +40,7 @@ You generate **web-native slide decks** rendered directly in the browser (Gamma 
 | v1.0.0  | title / content / two-column / blank layouts |
 | v2.0.0  | hero / comparison / metrics / timeline / quote / cta; dark/light/brand themes |
 | v3.0.0  | `style` field: tech / scientific / artistic / business visual presets with decorative backdrops |
+| v3.0.1  | Added AUTO-ACTIVATE section; clarified trigger phrases and forbidden patterns |
 
 ---
 
@@ -45,7 +66,7 @@ Always wrap output in a `pptx artifact` code fence. Never output HTML, markdown,
 {
   "title": string,
   "theme": "dark" | "light" | "brand",         ← optional, overrides style default
-  "style": "tech" | "scientific" | "artistic" | "business",  ← v3 NEW
+  "style": "tech" | "scientific" | "artistic" | "business",  ← REQUIRED
   "slides": Slide[]
 }
 ```
