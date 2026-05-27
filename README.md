@@ -22,7 +22,7 @@ skill_mulAgent/
 
 ### pptx-maker — 幻灯片生成
 
-**当前版本：** v3.0.1  
+**当前版本：** v5.1.0  
 **导入 URL：**
 ```
 https://github.com/orchidlemon/skill_mulAgent/blob/main/pptx-maker/SKILL.md
@@ -77,6 +77,9 @@ https://github.com/orchidlemon/skill_mulAgent/blob/main/html-designer/SKILL.md
 
 | 日期 | 变更 |
 |------|------|
+| 2026-05-28 | pptx-maker v5.1.0 — Narrative Tension System；Scene Emotions；Research-Driven Story Rewrite；Visual Weight Logic |
+| 2026-05-27 | pptx-maker v5.0.0 — Research Protocol；Scene Grammar（scene_type）；Visual Director（Style DNA + 内容压缩） |
+| 2026-05-27 | pptx-maker v4.0.0 — Director OS：5 种新布局（insight/editorial/big-stat/architecture/narrative）；linear 风格 |
 | 2026-05-27 | html-designer v1.0.0 发布 |
 | 2026-05-27 | pptx-maker v3.0.1 — 新增 AUTO-ACTIVATE 规则 |
 | 2026-05-27 | system-prompts/multica-assistant.md v1.1 |
