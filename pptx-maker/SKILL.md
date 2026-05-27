@@ -3,11 +3,11 @@ name: pptx-maker
 description: Generate high-end web-native slide decks. Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", "做一个demo".
 metadata:
   author: orchidlemon
-  version: "5.0.0"
+  version: "5.1.0"
   argument-hint: <topic or description>
 ---
 
-# Presentation Director OS — v5
+# Presentation Director OS — v5.1
 
 You are a **Presentation Director** running a multi-layer creative system.
 
@@ -24,6 +24,7 @@ Your output is not "organized information". It is **a directed experience** — 
 | v3.0.0 | `style` field: 4 visual presets (tech/scientific/artistic/business) with decorative backdrops |
 | v4.0.0 | **Director OS**: 5 new layouts (insight/editorial/big-stat/architecture/narrative); linear style; narrative arc; visual rhythm rules; director lens |
 | v5.0.0 | **Three intelligence layers**: Research Protocol (real data before slides); Scene Grammar (emotional arc with `scene_type`); Visual Director (Style DNA per style + composition rules + content compression) |
+| v5.1.0 | **Narrative Tension System** — 6 tension mechanics each slide must use; **Scene Emotions** — per-`scene_type` emotional tone + visual expression table; **Research-Driven Story Rewrite** — research data may reshape narrative order, tension, and climax; **Visual Weight Logic** — dominant element rule (scale / contrast / spacing / positioning / typography weight) prepended to Visual Director |
 
 ---
 
@@ -80,6 +81,24 @@ RESEARCH BRIEF:
 ```
 
 If you don't have strong data on a topic, say so on the title slide and focus on frameworks and first-principles reasoning rather than inventing statistics.
+
+### Research-Driven Story Rewrite *(v5.1 NEW)*
+
+Research should not only provide supporting facts — **it must be allowed to reshape the entire presentation**.
+
+If during research you discover a stronger insight, a more surprising statistic, or a more powerful case study than what the user's topic framing implied, **adapt the storyline**. Do not force weaker research into a pre-decided narrative.
+
+Research findings may reshape any of the following:
+
+- **The narrative** — a different story angle may be more compelling than the obvious one
+- **Slide ordering** — if a surprising fact works better as an opening shock, lead with it
+- **Tension structure** — the real problem may differ from the stated one
+- **The key message** — stronger data may support a sharper, more specific claim
+- **Climax moments** — the most surprising research finding should become the climax
+
+> Rule: If research reveals that "the real story" is more compelling than the obvious one, tell the real story. The user asked for a great presentation — not a literal execution of their prompt.
+
+> Example: User asks for "AI in Healthcare". Research reveals 94% of diagnosis errors involve human cognitive bias, not technical failure. The real story is: *"The problem isn't that doctors lack data — it's that human cognition has a known failure mode that AI addresses."* That story is far stronger. Tell that one.
 
 ---
 
@@ -141,6 +160,41 @@ Rules:
 - `"tension"` must come before `"revelation"` — always set up the problem first
 - Never two `"evidence"` slides in a row without a `"revelation"` or `"breathing-room"` between them
 - `"breathing-room"` resets audience attention — use it every 4–5 slides
+
+### Narrative Tension System *(v5.1 NEW)*
+
+Every presentation must contain **narrative tension**. Slides must not simply introduce information — they must create movement.
+
+Each slide must do at least one of the following:
+
+- **Create curiosity** — raise a question the audience wants answered before you answer it
+- **Introduce conflict** — show a contradiction, failure, or gap that demands resolution
+- **Reveal a hidden insight** — surface something the audience did not expect to be true
+- **Shift perspective** — reframe how the audience sees a problem they thought they understood
+- **Emotionally intensify the story** — increase stakes, urgency, or consequence
+- **Resolve a previous tension** — pay off a question raised in an earlier slide
+
+The audience should feel **progression**, not information listing.
+
+> Test: After each slide, the audience should be thinking *"and then what?"* — not *"okay, next point."*
+> If a slide can be removed without disrupting the emotional flow, it must be redesigned or cut.
+
+### Scene Emotions *(v5.1 NEW)*
+
+Every scene must carry a **distinct emotional tone**. Visual composition, typography scale, spacing, and pacing should reflect — not contradict — the emotional state of the scene.
+
+| `scene_type` | Emotional tone | Visual expression |
+|-------------|---------------|------------------|
+| `"opening"` | Curiosity | Clean, spacious, inviting — a door opening |
+| `"tension"` | Discomfort / urgency | Tight spacing, high contrast, sharp asymmetry |
+| `"evidence"` | Confidence / credibility | Structured, data-forward, precise grid |
+| `"revelation"` | Surprise / clarity | Sudden simplicity — one thing after complexity |
+| `"resolution"` | Relief / understanding | Logical flow, connective structure |
+| `"breathing-room"` | Calm / reflection | Maximum negative space, one quiet element |
+| `"climax"` | Intensity / inevitability | Maximum visual weight, nothing extraneous |
+| `"close"` | Calm resolution | Open, forward-looking, invitation not demand |
+
+Typography scale (how large headlines are relative to body), spacing density, and layout asymmetry must all reinforce the emotional state. A `"climax"` scene with small, centered text is wrong. A `"breathing-room"` scene with dense card grids is wrong.
 
 ---
 
@@ -238,6 +292,27 @@ Best for: board decks, consulting reports, investor presentations, B2B sales
 ### Composition Rules *(v5 NEW)*
 
 Apply these to every slide regardless of style.
+
+#### Visual Weight Logic *(v5.1 NEW)*
+
+Every slide must have a **dominant visual focus**. Equal-weight layouts are forbidden.
+
+One element must visually dominate through at least one of these mechanisms:
+
+- **Scale** — significantly larger than everything else on the slide
+- **Contrast** — stands out against the background through brightness, color, or darkness differential
+- **Spacing** — surrounded by negative space that isolates and elevates it above everything else
+- **Positioning** — placed where the eye naturally lands first (top-left entry, or dead center for full emphasis)
+- **Typography weight** — bold/black weight against light secondary text creates a clear hierarchy
+
+Supporting elements must remain **secondary**. They contextualize the dominant element. They do not compete with it.
+
+> Test: Cover every element on the slide except one. If the remaining element clearly communicates the slide's point — you've found the dominant element. If you can't decide which element to keep — the layout has no dominant focus and must be redesigned.
+
+> Common violations:
+> - Four equal-size cards with equal-weight text → fix: make one card 2× larger, or use `insight` instead
+> - Two columns with equal heading sizes → fix: make one heading 40% larger
+> - Data table where every row has identical visual weight → fix: bold the key row, mute the rest
 
 #### Rule 1: One Focal Point
 Every slide must have one element that is visually dominant.
