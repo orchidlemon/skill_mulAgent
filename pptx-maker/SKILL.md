@@ -1,15 +1,25 @@
-﻿---
+---
 name: pptx-maker
 description: Generate high-end web-native slide decks (Gamma/Manus style). Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", or "做一个demo".
 metadata:
   author: orchidlemon
-  version: "2.0.0"
+  version: "3.0.0"
   argument-hint: <topic or description>
 ---
 
-# Slides Maker — Reveal Runtime
+# Slides Maker — v3 Visual Styles
 
-You generate **web-native slide decks** rendered directly in the browser (Gamma / Manus style) — not PowerPoint files. Output is a JSON schema that drives a high-end React slides renderer with smooth transitions and modern design.
+You generate **web-native slide decks** rendered directly in the browser (Gamma / Manus style). Output is a JSON schema rendered by a React slides renderer with smooth transitions, modern design, and **4 distinct visual style presets** with decorative backgrounds.
+
+---
+
+## Changelog
+
+| Version | Key Changes |
+|---------|-------------|
+| v1.0.0  | title / content / two-column / blank layouts |
+| v2.0.0  | hero / comparison / metrics / timeline / quote / cta; dark/light/brand themes |
+| v3.0.0  | `style` field: tech / scientific / artistic / business visual presets with decorative backdrops |
 
 ---
 
@@ -17,13 +27,15 @@ You generate **web-native slide decks** rendered directly in the browser (Gamma 
 
 Always wrap output in a `pptx artifact` code fence. Never output HTML, markdown, or .pptx files.
 
+````
 ```pptx artifact title="<presentation title>"
 {
   "title": "...",
-  "theme": "dark",
+  "style": "tech",
   "slides": [...]
 }
 ```
+````
 
 ---
 
@@ -32,245 +44,251 @@ Always wrap output in a `pptx artifact` code fence. Never output HTML, markdown,
 ```
 {
   "title": string,
-  "theme": "dark" | "light" | "brand",
+  "theme": "dark" | "light" | "brand",         ← optional, overrides style default
+  "style": "tech" | "scientific" | "artistic" | "business",  ← v3 NEW
   "slides": Slide[]
 }
 ```
 
-### Theme
+---
 
-| Theme   | When to use                        | Background    |
-|---------|------------------------------------|---------------|
-| "dark"  | Tech, AI, startup — DEFAULT        | #0B0F14 navy  |
-| "light" | Business, academic, report         | #FAFAFA white |
-| "brand" | Product launch, keynote            | Gradient      |
+## Visual Styles (v3)
+
+Each style applies a decorative background layer and picks a matching default theme.
+
+| Style | Auto Theme | Best For | Visual Character |
+|-------|-----------|---------|-----------------|
+| `"tech"` | dark `#0B0F14` | AI, startup, developer tools, SaaS | Dot-matrix grid · indigo corner brackets · scan lines |
+| `"scientific"` | light `#FAFAFA` | Research, data analysis, academic | Graph grid · blue crosshair marker · axis tick points |
+| `"artistic"` | brand `#0F0A1E` | Creative, design, portfolio, brand | Large overlapping color circles · diagonal brush strokes · amber triangle |
+| `"business"` | light `#FAFAFA` | Corporate pitch, report, consulting | Blue left accent bar · diagonal corner triangle · professional |
+
+**Rules:**
+- Always set `style`. It is the primary visual choice.
+- `theme` is optional — omit it and the renderer picks the right default automatically.
+- Override `theme` only when you intentionally want an unusual combination (e.g. dark business deck).
+
+---
+
+## Themes (color palette override)
+
+| Theme | Background | When to override |
+|-------|-----------|-----------------|
+| `"dark"` | #0B0F14 navy | Tech/startup with dark bg |
+| `"light"` | #FAFAFA white | Clean, readable, academic |
+| `"brand"` | #0F0A1E purple | Bold, expressive, creative |
 
 ---
 
 ## Slide Layouts
 
-### hero — Opening impact slide
-
+### `"hero"` — Full-bleed opening slide
 ```json
 {
   "layout": "hero",
-  "badge": "v2.0",
-  "title": "Multi-Agent Collaboration",
-  "subtitle": "Memory-driven orchestration at scale",
-  "note": "Internal demo · May 2026"
+  "badge": "optional label",
+  "title": "Main Title",
+  "subtitle": "Supporting line",
+  "note": "optional footnote"
 }
 ```
 
-Fields: badge (optional pill label), title (max 8 words), subtitle (max 15 words), note (small footnote)
-
----
-
-### content — Title + cards or bullets
-
-Card grid (for features/capabilities):
+### `"content"` — Title + card grid or bullets
 ```json
 {
   "layout": "content",
-  "title": "Core Capabilities",
-  "subtitle": "What makes it different",
+  "title": "Section Title",
+  "subtitle": "optional subline",
   "items": [
-    { "icon": "cpu",    "title": "Fast",    "desc": "Sub-100ms latency" },
-    { "icon": "shield", "title": "Secure",  "desc": "End-to-end encrypted" },
-    { "icon": "zap",    "title": "Scalable","desc": "10k concurrent agents" }
+    { "icon": "cpu", "title": "Card Title", "desc": "Description text" }
   ]
 }
 ```
-
-Bullet list (for steps/explanations):
+Or with bullets (when items are not available):
 ```json
 {
   "layout": "content",
-  "title": "How It Works",
-  "bullets": [
-    "Agent receives task from workspace",
-    "Retrieves relevant memory chunks",
-    "Executes with tool access"
-  ]
+  "title": "Title",
+  "bullets": ["Point one", "Point two", "Point three"]
 }
 ```
 
-Available icon values: cpu, shield, zap, brain, rocket, globe, code, chart, users, lock, check, star, target, layers, box, git
+**Icons:** `cpu` · `shield` · `zap` · `brain` · `rocket` · `globe` · `code` · `chart` · `users` · `lock` · `check` · `star` · `target` · `layers`
 
----
-
-### comparison — Before vs After
-
-```json
-{
-  "layout": "comparison",
-  "title": "Before vs After",
-  "left": {
-    "label": "Traditional Approach",
-    "sentiment": "negative",
-    "points": ["Manual task routing", "No memory", "Single-agent bottleneck"]
-  },
-  "right": {
-    "label": "With Multi-Agent",
-    "sentiment": "positive",
-    "points": ["Auto parallel routing", "Persistent memory", "Infinite scale"]
-  }
-}
-```
-
-sentiment: "positive" (green) | "negative" (red) | "neutral" (default)
-
----
-
-### metrics — Big numbers
-
-```json
-{
-  "layout": "metrics",
-  "title": "Results After 30 Days",
-  "subtitle": "Production deployment across 3 accounts",
-  "metrics": [
-    { "value": "47%",   "label": "Faster task completion", "trend": "up" },
-    { "value": "3.2x",  "label": "Throughput increase",    "trend": "up" },
-    { "value": "$2.4M", "label": "Cost saved annually",    "trend": "up" }
-  ]
-}
-```
-
-trend: "up" (green arrow) | "down" (red arrow) | "neutral" (no indicator)
-
----
-
-### timeline — Roadmap / phases
-
-```json
-{
-  "layout": "timeline",
-  "title": "Product Roadmap",
-  "events": [
-    { "marker": "Q1 2025", "title": "Foundation",  "desc": "Core runtime",   "done": true  },
-    { "marker": "Q2 2025", "title": "Memory",      "desc": "Persistent ctx", "done": true  },
-    { "marker": "Q3 2025", "title": "Multi-Agent", "desc": "Orchestration",  "done": false }
-  ]
-}
-```
-
----
-
-### two-column — Side by side
-
+### `"two-column"` — Side-by-side layout
 ```json
 {
   "layout": "two-column",
-  "title": "Architecture",
-  "left":  { "heading": "Frontend", "bullets": ["React", "WebSocket", "Artifacts"] },
-  "right": { "heading": "Backend",  "bullets": ["Go API", "PostgreSQL", "Daemon"] }
+  "title": "Comparison",
+  "left":  { "heading": "Before", "bullets": ["Item A", "Item B"], "badge": "old" },
+  "right": { "heading": "After",  "bullets": ["Item C", "Item D"], "badge": "new" }
 }
 ```
 
----
+### `"comparison"` — Sentiment-colored panels
+```json
+{
+  "layout": "comparison",
+  "title": "Pros vs Cons",
+  "left":  { "label": "Advantages", "sentiment": "positive", "points": ["Fast", "Cheap"] },
+  "right": { "label": "Drawbacks",  "sentiment": "negative", "points": ["Complex", "New"] }
+}
+```
+`sentiment`: `"positive"` (emerald) · `"negative"` (rose) · `"neutral"`
 
-### quote — Pull quote / testimonial
+### `"metrics"` — Big numbers
+```json
+{
+  "layout": "metrics",
+  "title": "Key Results",
+  "subtitle": "Q4 2024",
+  "metrics": [
+    { "value": "42%", "label": "Growth", "trend": "up", "desc": "YoY" },
+    { "value": "3.2×", "label": "ROI",   "trend": "up" },
+    { "value": "$1.2B", "label": "ARR",  "trend": "neutral" }
+  ]
+}
+```
+`trend`: `"up"` · `"down"` · `"neutral"`
 
+### `"timeline"` — Roadmap / phases
+```json
+{
+  "layout": "timeline",
+  "title": "Project Roadmap",
+  "events": [
+    { "marker": "Q1 2025", "title": "Phase 1", "desc": "Foundation", "done": true },
+    { "marker": "Q2 2025", "title": "Phase 2", "desc": "Launch",     "done": false }
+  ]
+}
+```
+
+### `"quote"` — Pull quote
 ```json
 {
   "layout": "quote",
-  "quote": "The best interface is no interface. The agent should just know.",
-  "author": "Sam Chen",
-  "role": "CTO, Acme Corp"
+  "quote": "The best way to predict the future is to invent it.",
+  "author": "Alan Kay",
+  "role": "Computer Scientist"
 }
 ```
 
----
-
-### cta — Closing call to action
-
+### `"cta"` — Closing call-to-action
 ```json
 {
   "layout": "cta",
-  "title": "Ready to get started?",
-  "subtitle": "Join 500+ teams already using multi-agent workflows",
-  "action": "Start free trial →"
+  "title": "Ready to Start?",
+  "subtitle": "Join 10,000+ teams already using it",
+  "action": "Get Started Free"
 }
 ```
 
 ---
 
-## Composition Rules
+## Design Principles
 
-1. Always start with "hero" — punchy title, one supporting line
-2. One idea per slide — more than 4 bullets → split into two slides
-3. Use "metrics" for proof — numbers beat words every time
-4. Use "comparison" for selling — show the pain, then the solution
-5. End with "cta" — one clear next step
-6. Sweet spot: 6–12 slides
-7. Titles are takeaways, not topics: "Revenue grew 47%" not "Revenue"
-8. Dark theme by default
+1. **Open with `hero`** — always start with a full-bleed title slide.
+2. **Vary layouts** — never use the same layout 3+ times in a row. Mix metrics, comparison, timeline.
+3. **Use `items` in `content`** — prefer card grid over plain bullets when listing features/concepts.
+4. **Close with `cta`** — always end with a call-to-action or summary slide.
+5. **8–14 slides** is the ideal deck length unless the user specifies otherwise.
+6. **Pick `style` based on topic** — tech for software, scientific for research, artistic for creative, business for corporate.
 
 ---
 
-## Full Example
+## Full Example — Tech Style
 
-```pptx artifact title="AI Agent Platform Demo"
+````
+```pptx artifact title="AI Agent Platform"
 {
-  "title": "AI Agent Platform Demo",
-  "theme": "dark",
+  "title": "AI Agent Platform",
+  "style": "tech",
   "slides": [
     {
       "layout": "hero",
-      "badge": "Internal Demo",
-      "title": "AI Agents as Real Teammates",
-      "subtitle": "Assign issues, review PRs, and ship features autonomously",
-      "note": "Multica Platform · May 2026"
-    },
-    {
-      "layout": "content",
-      "title": "The Problem",
-      "bullets": [
-        "AI tools are isolated with no memory or collaboration",
-        "Every task starts from scratch",
-        "Developers spend 40% of time on coordination"
-      ]
-    },
-    {
-      "layout": "comparison",
-      "title": "Old Way vs New Way",
-      "left": {
-        "label": "Without Agents",
-        "sentiment": "negative",
-        "points": ["Manual routing", "Lost context", "One tool at a time"]
-      },
-      "right": {
-        "label": "With Multica",
-        "sentiment": "positive",
-        "points": ["Auto-assigned", "Memory graph", "Multi-agent parallel"]
-      }
+      "badge": "Product Overview",
+      "title": "AI Agent Platform",
+      "subtitle": "Autonomous agents that get work done"
     },
     {
       "layout": "content",
       "title": "Core Capabilities",
       "items": [
-        { "icon": "brain",  "title": "Memory",       "desc": "Agents remember across sessions" },
-        { "icon": "users",  "title": "Collaboration", "desc": "Multiple agents, one task" },
-        { "icon": "code",   "title": "Code Actions",  "desc": "Write, review, deploy" },
-        { "icon": "shield", "title": "Guardrails",    "desc": "Human-in-the-loop approvals" }
+        { "icon": "brain",  "title": "Multi-Agent",   "desc": "Coordinate swarms of specialized agents" },
+        { "icon": "code",   "title": "Code Execution", "desc": "Write, run, and debug code autonomously" },
+        { "icon": "globe",  "title": "Web Access",    "desc": "Browse, search, and extract live data" },
+        { "icon": "shield", "title": "Safe by Design","desc": "Guardrails and human-in-the-loop controls" }
       ]
     },
     {
       "layout": "metrics",
-      "title": "Early Results",
-      "subtitle": "30-day pilot across 5 engineering teams",
+      "title": "Platform Performance",
       "metrics": [
-        { "value": "3x",  "label": "Faster issue resolution", "trend": "up" },
-        { "value": "68%", "label": "Less context switching",  "trend": "up" },
-        { "value": "12h", "label": "Saved per dev per week",  "trend": "up" }
+        { "value": "10×", "label": "Faster than manual", "trend": "up" },
+        { "value": "99.9%", "label": "Uptime SLA",       "trend": "up" },
+        { "value": "500+", "label": "Integrations",      "trend": "neutral" }
+      ]
+    },
+    {
+      "layout": "timeline",
+      "title": "Roadmap",
+      "events": [
+        { "marker": "Q1", "title": "Core Agents",   "done": true  },
+        { "marker": "Q2", "title": "Memory Layer",  "done": true  },
+        { "marker": "Q3", "title": "Multi-Modal",   "done": false },
+        { "marker": "Q4", "title": "Enterprise GA", "done": false }
       ]
     },
     {
       "layout": "cta",
-      "title": "Let us build the future of work together",
-      "subtitle": "Request access to the private beta",
-      "action": "Get early access →"
+      "title": "Start Building Today",
+      "subtitle": "Free tier — no credit card required",
+      "action": "Get Early Access"
     }
   ]
 }
 ```
+````
+
+---
+
+## Full Example — Scientific Style
+
+````
+```pptx artifact title="Climate Research Summary"
+{
+  "title": "Climate Research Summary",
+  "style": "scientific",
+  "slides": [
+    {
+      "layout": "hero",
+      "badge": "2024 Annual Report",
+      "title": "Climate Change Indicators",
+      "subtitle": "Data-driven analysis of global trends"
+    },
+    {
+      "layout": "metrics",
+      "title": "Key Measurements",
+      "subtitle": "Global averages — 2024",
+      "metrics": [
+        { "value": "+1.4°C", "label": "Avg. temp rise",    "trend": "up",   "desc": "vs. pre-industrial" },
+        { "value": "422ppm", "label": "CO₂ concentration", "trend": "up",   "desc": "Mauna Loa station"  },
+        { "value": "-13%",   "label": "Arctic sea ice",    "trend": "down", "desc": "per decade"         }
+      ]
+    },
+    {
+      "layout": "comparison",
+      "title": "Mitigation Strategies",
+      "left":  { "label": "High Impact", "sentiment": "positive", "points": ["Renewable energy", "Reforestation", "Carbon capture"] },
+      "right": { "label": "Low Impact",  "sentiment": "negative", "points": ["Recycling alone", "Minor efficiency gains"] }
+    },
+    {
+      "layout": "cta",
+      "title": "Action Required Now",
+      "subtitle": "Limiting warming to 1.5°C requires immediate systemic change",
+      "action": "Read Full Report"
+    }
+  ]
+}
+```
+````
