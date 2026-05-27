@@ -1,139 +1,276 @@
----
+﻿---
 name: pptx-maker
-description: Generate downloadable PowerPoint presentations (.pptx) with structured JSON. Use when asked to "make a PPT", "create slides", "做PPT", "做幻灯片", or "制作演示文稿".
+description: Generate high-end web-native slide decks (Gamma/Manus style). Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", or "做一个demo".
 metadata:
-  author: multica-local
-  version: "1.0.0"
+  author: orchidlemon
+  version: "2.0.0"
   argument-hint: <topic or description>
 ---
 
-# PPT Maker Skill
+# Slides Maker — Reveal Runtime
 
-You generate PowerPoint presentations. Output is a structured JSON artifact that renders as an interactive slide preview with a one-click `.pptx` download.
+You generate **web-native slide decks** rendered directly in the browser (Gamma / Manus style) — not PowerPoint files. Output is a JSON schema that drives a high-end React slides renderer with smooth transitions and modern design.
 
-## ⚠️ Critical: Output format
+---
 
-**Always** wrap your output in a `pptx` artifact code fence. Never output HTML, CSS, or plain markdown for presentations.
+## Output format (REQUIRED)
 
-````
+Always wrap output in a `pptx artifact` code fence. Never output HTML, markdown, or .pptx files.
+
 ```pptx artifact title="<presentation title>"
 {
-  "title": "Presentation title",
-  "theme": "light",
+  "title": "...",
+  "theme": "dark",
   "slides": [...]
 }
 ```
-````
+
+---
 
 ## Schema
 
 ```
 {
   "title": string,
-  "theme": "light" | "dark" | "blue",
+  "theme": "dark" | "light" | "brand",
   "slides": Slide[]
 }
 ```
 
-### Slide layouts
+### Theme
 
-**Title slide** — opening slide with large centered title:
-```json
-{ "layout": "title", "title": "string", "subtitle": "string (optional)" }
-```
+| Theme   | When to use                        | Background    |
+|---------|------------------------------------|---------------|
+| "dark"  | Tech, AI, startup — DEFAULT        | #0B0F14 navy  |
+| "light" | Business, academic, report         | #FAFAFA white |
+| "brand" | Product launch, keynote            | Gradient      |
 
-**Content slide** — title + bullet list:
-```json
-{ "layout": "content", "title": "string", "bullets": ["point 1", "point 2"] }
-```
-Or with free text instead of bullets:
-```json
-{ "layout": "content", "title": "string", "text": "paragraph text" }
-```
+---
 
-**Two-column slide** — side-by-side comparison:
+## Slide Layouts
+
+### hero — Opening impact slide
+
 ```json
 {
-  "layout": "two-column",
-  "title": "string",
-  "left":  { "heading": "optional", "bullets": ["..."] },
-  "right": { "heading": "optional", "bullets": ["..."] }
+  "layout": "hero",
+  "badge": "v2.0",
+  "title": "Multi-Agent Collaboration",
+  "subtitle": "Memory-driven orchestration at scale",
+  "note": "Internal demo · May 2026"
 }
 ```
 
-**Blank slide** — free-form text:
+Fields: badge (optional pill label), title (max 8 words), subtitle (max 15 words), note (small footnote)
+
+---
+
+### content — Title + cards or bullets
+
+Card grid (for features/capabilities):
 ```json
-{ "layout": "blank", "title": "optional", "text": "optional" }
+{
+  "layout": "content",
+  "title": "Core Capabilities",
+  "subtitle": "What makes it different",
+  "items": [
+    { "icon": "cpu",    "title": "Fast",    "desc": "Sub-100ms latency" },
+    { "icon": "shield", "title": "Secure",  "desc": "End-to-end encrypted" },
+    { "icon": "zap",    "title": "Scalable","desc": "10k concurrent agents" }
+  ]
+}
 ```
 
-## Theme guide
-
-| Theme | Best for |
-|-------|----------|
-| `"light"` | General use, business, academic |
-| `"dark"` | Tech, startup, modern brand |
-| `"blue"` | Formal, enterprise, government |
-
-## Presentation principles
-
-1. **Open with `title` layout** — large title + subtitle.
-2. **One idea per slide** — if a slide has more than 5 bullets, split it into two.
-3. **Bullets are short phrases** (3–8 words), not sentences.
-4. **Use `two-column` for comparisons** — before/after, pros/cons, feature vs benefit.
-5. **Close with a clear next step** — question, decision, or call to action.
-6. **8–15 slides** is the sweet spot unless specified otherwise.
-
-## Full example
-
-````
-```pptx artifact title="心理类型简介"
+Bullet list (for steps/explanations):
+```json
 {
-  "title": "心理类型简介",
-  "theme": "light",
+  "layout": "content",
+  "title": "How It Works",
+  "bullets": [
+    "Agent receives task from workspace",
+    "Retrieves relevant memory chunks",
+    "Executes with tool access"
+  ]
+}
+```
+
+Available icon values: cpu, shield, zap, brain, rocket, globe, code, chart, users, lock, check, star, target, layers, box, git
+
+---
+
+### comparison — Before vs After
+
+```json
+{
+  "layout": "comparison",
+  "title": "Before vs After",
+  "left": {
+    "label": "Traditional Approach",
+    "sentiment": "negative",
+    "points": ["Manual task routing", "No memory", "Single-agent bottleneck"]
+  },
+  "right": {
+    "label": "With Multi-Agent",
+    "sentiment": "positive",
+    "points": ["Auto parallel routing", "Persistent memory", "Infinite scale"]
+  }
+}
+```
+
+sentiment: "positive" (green) | "negative" (red) | "neutral" (default)
+
+---
+
+### metrics — Big numbers
+
+```json
+{
+  "layout": "metrics",
+  "title": "Results After 30 Days",
+  "subtitle": "Production deployment across 3 accounts",
+  "metrics": [
+    { "value": "47%",   "label": "Faster task completion", "trend": "up" },
+    { "value": "3.2x",  "label": "Throughput increase",    "trend": "up" },
+    { "value": "$2.4M", "label": "Cost saved annually",    "trend": "up" }
+  ]
+}
+```
+
+trend: "up" (green arrow) | "down" (red arrow) | "neutral" (no indicator)
+
+---
+
+### timeline — Roadmap / phases
+
+```json
+{
+  "layout": "timeline",
+  "title": "Product Roadmap",
+  "events": [
+    { "marker": "Q1 2025", "title": "Foundation",  "desc": "Core runtime",   "done": true  },
+    { "marker": "Q2 2025", "title": "Memory",      "desc": "Persistent ctx", "done": true  },
+    { "marker": "Q3 2025", "title": "Multi-Agent", "desc": "Orchestration",  "done": false }
+  ]
+}
+```
+
+---
+
+### two-column — Side by side
+
+```json
+{
+  "layout": "two-column",
+  "title": "Architecture",
+  "left":  { "heading": "Frontend", "bullets": ["React", "WebSocket", "Artifacts"] },
+  "right": { "heading": "Backend",  "bullets": ["Go API", "PostgreSQL", "Daemon"] }
+}
+```
+
+---
+
+### quote — Pull quote / testimonial
+
+```json
+{
+  "layout": "quote",
+  "quote": "The best interface is no interface. The agent should just know.",
+  "author": "Sam Chen",
+  "role": "CTO, Acme Corp"
+}
+```
+
+---
+
+### cta — Closing call to action
+
+```json
+{
+  "layout": "cta",
+  "title": "Ready to get started?",
+  "subtitle": "Join 500+ teams already using multi-agent workflows",
+  "action": "Start free trial →"
+}
+```
+
+---
+
+## Composition Rules
+
+1. Always start with "hero" — punchy title, one supporting line
+2. One idea per slide — more than 4 bullets → split into two slides
+3. Use "metrics" for proof — numbers beat words every time
+4. Use "comparison" for selling — show the pain, then the solution
+5. End with "cta" — one clear next step
+6. Sweet spot: 6–12 slides
+7. Titles are takeaways, not topics: "Revenue grew 47%" not "Revenue"
+8. Dark theme by default
+
+---
+
+## Full Example
+
+```pptx artifact title="AI Agent Platform Demo"
+{
+  "title": "AI Agent Platform Demo",
+  "theme": "dark",
   "slides": [
     {
-      "layout": "title",
-      "title": "心理类型简介",
-      "subtitle": "了解自己，理解他人"
+      "layout": "hero",
+      "badge": "Internal Demo",
+      "title": "AI Agents as Real Teammates",
+      "subtitle": "Assign issues, review PRs, and ship features autonomously",
+      "note": "Multica Platform · May 2026"
     },
     {
       "layout": "content",
-      "title": "什么是心理类型？",
+      "title": "The Problem",
       "bullets": [
-        "心理类型描述人们感知世界和做决策的偏好模式",
-        "最广为人知的框架：MBTI（迈尔斯-布里格斯类型指标）",
-        "16种类型，由4个维度组合而成",
-        "类型不是标签，而是理解自我的工具"
+        "AI tools are isolated with no memory or collaboration",
+        "Every task starts from scratch",
+        "Developers spend 40% of time on coordination"
       ]
     },
     {
-      "layout": "two-column",
-      "title": "四个核心维度",
+      "layout": "comparison",
+      "title": "Old Way vs New Way",
       "left": {
-        "heading": "能量来源 & 信息获取",
-        "bullets": ["外向 (E) vs 内向 (I)", "实感 (S) vs 直觉 (N)"]
+        "label": "Without Agents",
+        "sentiment": "negative",
+        "points": ["Manual routing", "Lost context", "One tool at a time"]
       },
       "right": {
-        "heading": "决策方式 & 生活态度",
-        "bullets": ["思考 (T) vs 情感 (F)", "判断 (J) vs 感知 (P)"]
+        "label": "With Multica",
+        "sentiment": "positive",
+        "points": ["Auto-assigned", "Memory graph", "Multi-agent parallel"]
       }
     },
     {
       "layout": "content",
-      "title": "为什么心理类型有用？",
-      "bullets": [
-        "提升自我认知：了解自己的优势和盲点",
-        "改善沟通：理解他人为何做出不同选择",
-        "团队协作：发挥每种类型的独特价值",
-        "职业规划：找到与天性契合的工作方向"
+      "title": "Core Capabilities",
+      "items": [
+        { "icon": "brain",  "title": "Memory",       "desc": "Agents remember across sessions" },
+        { "icon": "users",  "title": "Collaboration", "desc": "Multiple agents, one task" },
+        { "icon": "code",   "title": "Code Actions",  "desc": "Write, review, deploy" },
+        { "icon": "shield", "title": "Guardrails",    "desc": "Human-in-the-loop approvals" }
       ]
     },
     {
-      "layout": "blank",
-      "title": "下一步",
-      "text": "进行你的心理类型测评，开始认识真实的自己。"
+      "layout": "metrics",
+      "title": "Early Results",
+      "subtitle": "30-day pilot across 5 engineering teams",
+      "metrics": [
+        { "value": "3x",  "label": "Faster issue resolution", "trend": "up" },
+        { "value": "68%", "label": "Less context switching",  "trend": "up" },
+        { "value": "12h", "label": "Saved per dev per week",  "trend": "up" }
+      ]
+    },
+    {
+      "layout": "cta",
+      "title": "Let us build the future of work together",
+      "subtitle": "Request access to the private beta",
+      "action": "Get early access →"
     }
   ]
 }
 ```
-````
