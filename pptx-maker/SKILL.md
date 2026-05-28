@@ -290,6 +290,22 @@ Set `layout_intent` to tell the runtime **how to treat this slide structurally**
 - Do NOT set it on standard slides that need no special treatment (it's optional)
 - If `layout_intent` is `"evidence_board"`, the `evidence` field MUST contain a real citation
 
+### Dominant element rules
+
+`dominant_element` tells the renderer which single element controls the visual focus. Only one dominant element per slide.
+
+| Value | Effect on rendering |
+|-------|---------------------|
+| `headline` | Title fills 70% of slide space. Cards/content recede (50% opacity). Source strip recedes. |
+| `stat` | Statistic numbers are oversized (4xl). Title is smaller. |
+| `quote_strip` | Source attribution strip expands (editorial quote block). Cards are 35% opacity. Title shrinks. |
+| `visual` | Icon/image gets maximum space. Text becomes caption-weight. |
+
+**Rules:**
+- Every slide has ONE dominant element. If nothing is set, balance is assumed.
+- Do NOT set `dominant_element: "headline"` on slides that also have `focus: "grid"` with 4 cards — contradiction.
+- `quote_strip` is most powerful on `evidence_board` slides where the source IS the point.
+
 ### Visual Weight Logic
 
 Every slide must have **ONE dominant element** that is significantly larger, brighter, or more isolated than everything else.
