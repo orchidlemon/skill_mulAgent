@@ -474,6 +474,127 @@ The renderer reads `layout_family` first (v7 routing), then `layout_intent` (v6 
 
 ---
 
+## LAYER 7 — PRESENTATION RESTRAINT
+
+A great presentation maximizes **memory**, not information density.
+
+> *"The secret of great presentations is restraint. Apple Keynote, TED, Linear — they all share one quality: they say less and mean more."*
+
+---
+
+### The One-Idea Rule
+
+Every slide carries exactly ONE thing the audience must remember.
+
+If two ideas feel equally important → make two slides.  
+If you feel the urge to add a third bullet → delete the weakest one.
+
+**Test:** Cover everything except the title. Does the key message land without the rest?  
+If yes → hierarchy is correct.  
+If no → the title is competing with secondary content.
+
+### Restraint Hierarchy
+
+Before placing any content element, run this check:
+
+1. **Does this element support the ONE dominant idea?** → Keep
+2. **Does it compete with the dominant idea?** → Delete
+3. **Is this for the audience or for the speaker?** → If speaker → use `speaker_takeaway`, not the slide
+
+❌ Over-explained: title + 5 bullets + 3 cards + evidence strip + caption badge  
+✅ Restrained: bold title + 2–3 evidence points that directly support it  
+✅ More restrained: one massive stat + one sentence  
+
+### Breathing Slide Rules
+
+After every 2 consecutive evidence/content slides, insert ONE breathing slide.
+
+A breathing slide has:
+- ≤ 12 words total visible on the slide
+- Zero cards, zero bullet lists, zero evidence strips
+- Maximum whitespace  
+- Single focus: a quote, a statistic, or one bold statement
+
+Use `layout_family: "quote_focus"` or `layout_family: "hero_statement"` with `density: "minimal"`.
+
+❌ Never: 4+ consecutive evidence/content slides without a breathing slide  
+✅ Required: after every 2 `evidence` scene_type slides, insert `breathing-room` or `revelation`
+
+### Typography Governance
+
+Typography scale limits — the renderer enforces max values. Do NOT exceed these in your content:
+
+| Element | Recommended | Hard Maximum |
+|---------|-------------|--------------|
+| Hero title / `hero_statement` | 44–52px | **60px (3.75rem)** |
+| Section title / slide title | 28–36px | **44px (2.75rem)** |
+| Body text | 14–20px | 24px |
+| Caption / meta text | 11–14px | 16px |
+
+**`high visual_weight` is NOT expressed through large font size alone.**
+
+Visual weight = spacing + isolation + contrast + asymmetry + type weight.
+
+A 48px title surrounded by whitespace outweighs an 80px title surrounded by noise.
+
+Forbidden:
+- ❌ Hero title > 60px — produces poster syndrome, not presentation
+- ❌ One oversized sentence filling the full slide (unless it's `big-stat` — that's intentional)
+- ❌ More than 2 distinct font sizes in one slide
+- ❌ Body text > 22px when the slide has > 30 words
+
+### Slide Intensity Curve
+
+The deck is a film, not a report. Not all frames are the same intensity.
+
+| Slide role | Intensity | `content_length` | font weight |
+|------------|-----------|-----------------|-------------|
+| Opening / hero | High | `very_short` | black |
+| Tension setup | Medium-high | `short` | bold |
+| Evidence | Medium | `medium` | regular |
+| **Revelation / climax** | **PEAK** | **`very_short`** | **black** |
+| Breathing room | Low | `very_short` | light |
+| Resolution | Medium | `short`–`medium` | regular |
+| Close / CTA | High | `very_short` | bold |
+
+**Violation:** A climax slide with `items` array or `bullets` is wrong. Climax = `density: "minimal"` + `very_short`.
+
+**Violation:** More than 3 consecutive `medium`-intensity slides = no rhythm.
+
+### Layout Capacity Validation
+
+The renderer enforces these capacity limits. Violating them causes silent content loss:
+
+| `layout_family` | Capacity | Overflow action |
+|-----------------|----------|-----------------|
+| `hero_statement` | 1 claim + 1 subtitle | Strip anything else |
+| `quote_focus` | 1 quote + 1 attribution | Strip anything else |
+| `card_cluster` | 1 featured + max 3 supporting = **4 total** | 5+ items → auto-adapts to `dense_report` |
+| `evidence_board` | 2–4 evidence cards | All cards shown |
+| `process_flow` | All steps shown | Vertical layout for ≥5 |
+| `matrix_compare` | Equal rows on each side | Pad shorter side with `"—"` |
+| `split_argument` | 1 title + max 5 bullets | Truncate bullets above 5 |
+| `dense_report` | Unlimited, auto 2-col for ≥5 | Always shows all content |
+
+**Validation rule:** If your content exceeds a layout's capacity → choose a different `layout_family`, not the same one with more items.
+
+### Dominant Element Enforcement
+
+`dominant_element` is required on any slide with both a title AND cards/stats/items.
+
+When set, everything else recedes visually:
+
+| `dominant_element` | Amplify | Demote |
+|-------------------|---------|--------|
+| `headline` | Title larger + more spacing | Cards at 40% opacity |
+| `stat` | Number 4×, centered | Title smaller, context muted |
+| `quote_strip` | Source strip expanded | Title smaller, cards at 35% opacity |
+| `visual` | Icon fills its zone | All text becomes caption-weight |
+
+**Rule:** If you cannot name one dominant element on a slide → the slide lacks focus. Either delete elements until one dominates, or split into two slides.
+
+---
+
 ## SCHEMA
 
 ```json
