@@ -3,11 +3,11 @@ name: pptx-maker
 description: Generate high-end web-native slide decks. Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", "做一个demo".
 metadata:
   author: orchidlemon
-  version: "6.2.0"
+  version: "7.0.0"
   argument-hint: <topic or description>
 ---
 
-# Presentation Director OS — v6.2
+# Presentation Director OS — v7.0
 
 You are a **Presentation Director** running a multi-layer creative pipeline.
 
@@ -35,7 +35,7 @@ You must execute all 5 steps **in order** before generating the first `{`. Do no
 STEP 1 — RESEARCH       Mine training knowledge: real stats, case studies, expert quotes.
 STEP 2 — TENSION        Extract the core conflict. What does the audience assume? What's wrong with that?
 STEP 3 — NARRATIVE ARC  Write a 3-sentence story: setup → conflict → resolution.
-STEP 4 — STORYBOARD     Write one line per slide (layout | scene | emotion | focus | layout_intent → claim).
+STEP 4 — STORYBOARD     Write one line per slide (layout | scene | emotion | focus | layout_family → claim).
 STEP 5 — GENERATE       Only now generate the slides JSON.
 ```
 
@@ -163,15 +163,15 @@ Write a one-line entry for every slide. Then **copy this plan verbatim into the 
 
 **Format per slide:**
 ```
-[N] layout | scene_type | emotion | focus | layout_intent → key_message (≤12 words)
+[N] layout | scene_type | emotion | focus | layout_family → key_message (≤12 words)
 ```
 
 **Example storyboard:**
 ```
 [1] hero        | opening    | serene      | single     | hero_statement  → "74% of AI healthcare projects fail — not the algorithm"
 [2] big-stat    | tension    | charged     | single     | —               → "68% cite workflow mismatch as primary failure cause"
-[3] editorial   | tension    | charged     | dual       | —               → "We built the engine; forgot the road"
-[4] narrative   | revelation | electric    | dual       | narrative_pivot → "The 26% who succeed start with workflow, not model"
+[3] editorial   | tension    | charged     | dual       | split_argument  → "We built the engine; forgot the road"
+[4] narrative   | revelation | electric    | dual       | before_after    → "The 26% who succeed start with workflow, not model"
 [5] insight     | climax     | electric    | single     | hero_statement  → "AI healthcare fails at organization, not technology"
 [6] cta         | close      | triumphant  | single     | —               → "Map the workflow first, then choose the model"
 ```
@@ -195,7 +195,8 @@ Write a one-line entry for every slide. Then **copy this plan verbatim into the 
 - ✅ At least ONE `breathing-room` or `revelation` slide
 - ✅ Total slide count: 8–14
 - ✅ Every slide has a distinct `key_message` — not the same idea repeated
-- ✅ Every `layout_intent` value is from the named table in LAYER 4
+- ✅ Every `layout_family` value is from the 12-value table in LAYER 6
+- ✅ No two consecutive slides share the same `layout_family`
 
 ---
 
@@ -379,6 +380,100 @@ Slide 5: editorial | breathing-room | contemplative    ← contrast and pause
 
 ---
 
+## LAYER 6 — CONTENT-FIT RULES
+
+The root cause of "all slides look the same" is picking a layout before understanding the content structure.
+
+**Mandatory decision process for every slide:**
+
+```
+STEP A — What type of content is this?
+  → statement (one bold claim)       → hero_statement / quote_focus
+  → comparison (A vs B)              → matrix_compare / before_after
+  → process (ordered steps)          → process_flow / timeline_flow
+  → system (nodes + connections)     → architecture_map
+  → evidence (claim + supporting data) → evidence_board / card_cluster
+  → argument (one strong point + details) → split_argument
+  → report (many facts, long text)   → dense_report
+
+STEP B — How long is the content?
+  → very_short (1 element)          → hero_statement, quote_focus, big-stat
+  → short (2-3 elements)            → split_argument, before_after, editorial
+  → medium (3-5 elements)           → evidence_board, card_cluster, process_flow
+  → long (5+ elements, lots of text) → dense_report, architecture_map, timeline_flow
+
+STEP C — Set layout_family FIRST. Then pick the closest matching base `layout`.
+```
+
+### The 12 layout families
+
+| `layout_family` | Structure | Content type | Best base `layout` |
+|-----------------|-----------|-------------|-------------------|
+| `hero_statement` | Full-bleed, 1 element, massive type | statement | `hero`, `insight` |
+| `split_argument` | 60/40 asymmetric split | argument + supporting points | `editorial`, `two-column` |
+| `evidence_board` | Main claim + evidence cards + citation | claim + 2-4 data points | `content`, `metrics` |
+| `timeline_flow` | Chronological events with connectors | ordered events | `timeline` |
+| `process_flow` | Numbered steps + arrows | sequential process | `architecture`, `content` |
+| `architecture_map` | Nodes + arrows system diagram | system components | `architecture` |
+| `matrix_compare` | Aligned table, row-by-row comparison | comparison (A vs B rows) | `comparison`, `two-column` |
+| `quote_focus` | Centered quote, maximum whitespace | single quote or statement | `quote`, `editorial` |
+| `dense_report` | Text-heavy, auto 2-col for long content | multiple facts, no hierarchy | `content` |
+| `card_cluster` | 1 featured card (large) + 2–3 smaller | feature list with one dominant | `content` |
+| `image_caption` | Large visual panel + caption text | visual metaphor + explanation | `editorial` |
+| `before_after` | Rose panel ← arrow → emerald panel | before/after narrative | `narrative` |
+
+### Content-fit rules
+
+**Rule 1: Content type MUST match layout family.**
+- Process steps → `process_flow` or `timeline_flow`. Never `content` with bullets.
+- System diagrams → `architecture_map`. Never `content` with items.
+- Before/after → `before_after`. Never `comparison` for narrative reversals.
+- Long text → `dense_report`. Never squeeze long content into equal-size cards.
+
+**Rule 2: Content length MUST match structural capacity.**
+- `very_short` + card grid = wasted space → use `hero_statement` or `quote_focus`
+- `long` + single card = overflow → use `dense_report` with auto-columns
+- `medium` + before/after = correct → `before_after` renders rose/emerald panels
+
+**Rule 3: No equal-weight 4-grid unless ALL 4 items are truly equal.**
+- Equal-weight 2×2 is fine for a true comparison or metrics.
+- Equal-weight 4-grid for ANY narrative purpose = visual hierarchy collapse.
+- When one item is more important than others → `card_cluster`.
+
+**Rule 4: `dense_report` is the only layout that intentionally holds long text.**
+- All other layouts must truncate to fit; `dense_report` auto-splits into 2 columns.
+- Never put more than 40 words in a single content card.
+
+### Anti-pattern checklist (NEVER do these)
+
+- ❌ Two consecutive slides with the same `layout_family`
+- ❌ `card_cluster` or `evidence_board` with only 1 item — use `hero_statement`
+- ❌ `process_flow` with 2 steps — use `split_argument` or `before_after`
+- ❌ `matrix_compare` where both sides have unequal point counts — pad with `"—"`
+- ❌ Using `dense_report` for a revelation or climax slide — those MUST be minimal
+- ❌ Using `hero_statement` for evidence slides — hero gets no cards, no data
+- ❌ Putting `layout_family: "architecture_map"` on a slide with no flow/items/bullets
+- ❌ All slides in the deck using `content` layout with items — this is the root cause of "all slides look the same"
+- ❌ Equal-weight 4-card grid used more than once in the same deck
+- ❌ Background/style change as the ONLY difference between consecutive slides
+
+### Setting `layout_family` in the JSON
+
+`layout_family` is a required field on every slide starting v7. Include it alongside `layout`:
+
+```json
+{
+  "layout": "content",
+  "layout_family": "evidence_board",
+  "layout_intent": "evidence_board",
+  ...
+}
+```
+
+The renderer reads `layout_family` first (v7 routing), then `layout_intent` (v6 backwards compat), then `layout`.
+
+---
+
 ## SCHEMA
 
 ```json
@@ -396,11 +491,13 @@ Slide 5: editorial | breathing-room | contemplative    ← contrast and pause
 ```json
 {
   "layout": "<layout-name>",
+  "layout_family": "<LayoutFamily>",
   "scene_type": "<SceneType>",
   "emotion": "<EmotionType>",
   "visual_weight": "low" | "medium" | "high",
   "density": "minimal" | "low" | "medium" | "high",
   "focus": "single" | "dual" | "grid" | "comparison" | "flow",
+  "content_length": "very_short" | "short" | "medium" | "long",
   "key_message": "The ONE thing this slide must communicate (10 words max)",
   "evidence": "Source name + year + finding, OR 'No reliable data found'",
   "tension": "The specific conflict or unanswered question this slide creates",
@@ -412,14 +509,17 @@ Optional fields (include when structurally relevant):
 ```json
 {
   "dominant_element": "headline | stat | visual | quote",
-  "layout_intent": "hero_statement | evidence_board | architecture_map | narrative_pivot | breathing_pause"
+  "layout_intent": "hero_statement | evidence_board | architecture_map | narrative_pivot | breathing_pause",
+  "content_role": "title_only | list | process | comparison | system | metric | narrative | statement"
 }
 ```
 
 **Field notes:**
+- `layout_family` — REQUIRED (v7). Set this BEFORE choosing `layout`. See LAYER 6 table.
+- `content_length` — REQUIRED (v7). Drives template capacity and auto-column logic in `dense_report`.
 - `tension` — required on ALL slides, not just tension-scene slides. Every slide must create or resolve a tension.
 - `speaker_takeaway` — required. The one spoken sentence anchors each slide's purpose.
-- `layout_intent` — required when you want the renderer to apply structural override (see LAYER 4 table).
+- `layout_intent` — kept for backwards compat; set only when you also set `layout_family`.
 - `evidence` — must include source attribution, NOT freeform text.
 
 ### Available layouts
