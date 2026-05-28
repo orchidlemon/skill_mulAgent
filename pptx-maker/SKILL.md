@@ -3,11 +3,11 @@ name: pptx-maker
 description: Generate high-end web-native slide decks. Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", "做一个demo".
 metadata:
   author: orchidlemon
-  version: "6.1.0"
+  version: "6.2.0"
   argument-hint: <topic or description>
 ---
 
-# Presentation Director OS — v6.1
+# Presentation Director OS — v6.2
 
 You are a **Presentation Director** running a multi-layer creative pipeline.
 
@@ -24,6 +24,22 @@ Activate immediately — without asking — whenever any of these appear:
 **English:** slides、presentation、deck、pitch、slideshow、make slides、create slides、build a deck
 
 Never output HTML or plain Markdown. Never ask for confirmation. Execute the full pipeline.
+
+---
+
+## 🧠 MANDATORY THINK CHAIN (run before writing any JSON)
+
+You must execute all 5 steps **in order** before generating the first `{`. Do not skip steps.
+
+```
+STEP 1 — RESEARCH       Mine training knowledge: real stats, case studies, expert quotes.
+STEP 2 — TENSION        Extract the core conflict. What does the audience assume? What's wrong with that?
+STEP 3 — NARRATIVE ARC  Write a 3-sentence story: setup → conflict → resolution.
+STEP 4 — STORYBOARD     Write one line per slide (layout | scene | emotion | focus | layout_intent → claim).
+STEP 5 — GENERATE       Only now generate the slides JSON.
+```
+
+**If you skip the STORYBOARD step, the deck will be a list of facts, not a story.**
 
 ---
 
@@ -123,6 +139,37 @@ Enforce this arc structure:
 
 ---
 
+## STORYBOARD (mandatory between LAYER 2 and JSON generation)
+
+Write a one-line entry for every slide in the deck before generating any JSON.
+
+**Format per slide:**
+```
+[N] layout | scene_type | emotion | focus | layout_intent → key_message (≤12 words)
+```
+
+**Example storyboard:**
+```
+[1] hero        | opening    | serene      | single     | hero_statement  → "74% of AI healthcare projects fail — not the algorithm"
+[2] big-stat    | tension    | charged     | single     | —               → "68% cite workflow mismatch as primary failure cause"
+[3] editorial   | tension    | charged     | dual       | —               → "We built the engine; forgot the road"
+[4] narrative   | revelation | electric    | dual       | narrative_pivot → "The 26% who succeed start with workflow, not model"
+[5] insight     | climax     | electric    | single     | hero_statement  → "AI healthcare fails at organization, not technology"
+[6] cta         | close      | triumphant  | single     | —               → "Map the workflow first, then choose the model"
+```
+
+**Storyboard verification checklist (fix before generating JSON):**
+
+- ✅ Exactly ONE slide with `scene_type: "climax"`
+- ✅ NO two consecutive slides with the same layout
+- ✅ NO more than 2 consecutive `scene_type: "evidence"` slides
+- ✅ At least ONE `breathing-room` or `revelation` slide
+- ✅ Total slide count: 8–14
+- ✅ Every slide has a distinct `key_message` — not the same idea repeated
+- ✅ Every `layout_intent` value is from the named table in LAYER 4
+
+---
+
 ## LAYER 3 — SCENE GRAMMAR
 
 Every slide has a **narrative role** (`scene_type`) and an **emotional target** (`emotion`).
@@ -195,6 +242,24 @@ Every slide must include ALL of these fields:
 - `dual`: two elements in balance or contrast
 - `grid`: multiple equal items (use only for evidence slides with 3–4 items)
 - `comparison`: side-by-side contrast structure
+- `flow`: sequential process steps with arrows — use with `architecture` or `content` layout
+
+### Named layout_intent values
+
+Set `layout_intent` to tell the runtime **how to treat this slide structurally**. Use the exact values below — do not invent new ones.
+
+| Value | Structural meaning | Best layout pairing |
+|-------|--------------------|---------------------|
+| `hero_statement` | Full-bleed presence — one claim fills everything, nothing competes | `hero`, `insight` |
+| `evidence_board` | Main claim at top + evidence/data cards below + citation bar | `content` (grid/flow), `metrics` |
+| `architecture_map` | System structure, pipeline, component diagram | `architecture` |
+| `narrative_pivot` | Before → After with a key bridge insight — the moment things change | `narrative` |
+| `breathing_pause` | Slow down — visual or emotional rest between dense sections | `quote`, `editorial` |
+
+**When to set `layout_intent`:**
+- Set it on any slide where you want a specific structural treatment
+- Do NOT set it on standard slides that need no special treatment (it's optional)
+- If `layout_intent` is `"evidence_board"`, the `evidence` field MUST contain a real citation
 
 ### Visual Weight Logic
 
@@ -226,7 +291,7 @@ Every slide must have **ONE dominant element** that is significantly larger, bri
 
 ## LAYER 5 — CONTENT COMPRESSION
 
-Every slide: **one thought, not five.**
+Every slide: **one thought, one reason to exist, one visual focus.**
 
 Rules:
 1. **Punchline first** — the insight goes in the title, not the last bullet
@@ -234,6 +299,38 @@ Rules:
 3. **Delete the last sentence** — it's always a restatement of the first
 4. **One thought per slide** — if you feel the urge to add a bullet, make a new slide
 5. **Titles are claims** — "Team size affects communication" is a topic. "Teams larger than 8 people have 3× more coordination failures" is a claim.
+
+### Anti-patterns that produce empty, forgettable slides
+
+❌ **Vague title + empty bullets**
+```json
+{ "title": "AI 的优势", "bullets": ["提高效率", "降低成本", "改善体验"] }
+```
+✅ **Specific claim + real data**
+```json
+{ "title": "AI 让客服团队处理量提升 3 倍，人工成本下降 40%",
+  "layout": "big-stat", "value": "3×", "label": "客服处理量提升", "source": "Salesforce State of AI, 2023" }
+```
+
+❌ **Four equal-weight cards, same size, no hierarchy**
+```json
+{ "items": [{ "title": "速度" }, { "title": "成本" }, { "title": "质量" }, { "title": "规模" }] }
+```
+✅ **One dominant insight + supporting context**
+```json
+{ "layout": "narrative", "before": { "label": "过去", "point": "..." }, "after": { "label": "现在", "point": "..." }, "bridge": "..." }
+```
+
+❌ **Consecutive content slides with similar structure**
+```
+Slide 4: content | bullets | lucid
+Slide 5: content | bullets | lucid    ← same layout, same emotion, no rhythm
+```
+✅ **Layout variety enforces story rhythm**
+```
+Slide 4: content | evidence  | lucid
+Slide 5: editorial | breathing-room | contemplative    ← contrast and pause
+```
 
 ---
 
@@ -257,7 +354,7 @@ Rules:
   "emotion": "<EmotionType>",
   "visual_weight": "low" | "medium" | "high",
   "density": "minimal" | "low" | "medium" | "high",
-  "focus": "single" | "dual" | "grid" | "comparison",
+  "focus": "single" | "dual" | "grid" | "comparison" | "flow",
   "key_message": "The ONE thing this slide must communicate (10 words max)",
   "evidence": "The real data/fact/case supporting this slide (or 'No reliable data found')"
 }
@@ -268,7 +365,7 @@ Optional metadata fields (include when relevant):
 {
   "tension": "The conflict or question this slide raises",
   "dominant_element": "headline | stat | visual | quote",
-  "layout_intent": "Why this layout was chosen over alternatives",
+  "layout_intent": "hero_statement | evidence_board | architecture_map | narrative_pivot | breathing_pause",
   "speaker_takeaway": "What the presenter says out loud on this slide"
 }
 ```
@@ -354,13 +451,14 @@ Optional metadata fields (include when relevant):
   "items": [
     { "icon": "brain", "title": "Card Title", "desc": "Max 15 words — specific, not vague" }
   ],
-  "scene_type": "resolution",
+  "scene_type": "evidence",
   "emotion": "lucid",
   "visual_weight": "medium",
   "density": "medium",
   "focus": "grid",
+  "layout_intent": "evidence_board",
   "key_message": "...",
-  "evidence": "..."
+  "evidence": "Real citation: Author Year — key finding with specific numbers"
 }
 ```
 
@@ -390,11 +488,12 @@ Optional metadata fields (include when relevant):
   "before": { "label": "Current state", "point": "The problem in one sentence" },
   "after": { "label": "Target state", "point": "The solution in one sentence" },
   "bridge": "The insight connecting before to after",
-  "scene_type": "resolution",
-  "emotion": "lucid",
-  "visual_weight": "medium",
+  "scene_type": "revelation",
+  "emotion": "electric",
+  "visual_weight": "high",
   "density": "low",
   "focus": "dual",
+  "layout_intent": "narrative_pivot",
   "key_message": "...",
   "evidence": "..."
 }
@@ -447,7 +546,8 @@ Optional metadata fields (include when relevant):
   "emotion": "lucid",
   "visual_weight": "medium",
   "density": "high",
-  "focus": "grid",
+  "focus": "flow",
+  "layout_intent": "architecture_map",
   "key_message": "...",
   "evidence": "..."
 }
