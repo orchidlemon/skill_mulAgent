@@ -63,35 +63,55 @@ Run all layers before outputting a single slide.
 
 ## LAYER 0 — RESEARCH PROTOCOL
 
-**Before writing any slide**, mine your training knowledge for real evidence.
+**Before writing any slide**, you must gather real evidence. The quality of your research determines whether the deck is credible or forgettable.
 
 The difference:
 > ❌ "AI is important for business"
 > ✅ "McKinsey 2023: 70% of companies deploying AI report >5% revenue increase within 18 months"
 
-### Research Checklist
+### Research Priority (follow in order)
 
-For the given topic, extract from training knowledge:
+**Tier 1 — Web Search (preferred)**
+If you are in an environment that supports web search (Claude.ai with search enabled, tool-use mode, or any other live search capability):
+- **MUST search first.** Queries: `"[topic] statistics 2024"`, `"[topic] failure rate study"`, `"[topic] market research report"`
+- Cite the source URL + publication date in the `evidence` field
+- Prefer: peer-reviewed studies, industry reports (McKinsey, Gartner, IDC), government data, major news outlets
 
-1. **Statistics** — Real numbers with real sources. If unsure of exact figure, say "approximately" or use a range. **Never fabricate data.**
-2. **Case studies** — Specific named companies, projects, or people with real outcomes
-3. **Expert quotes** — Named experts with real institutional affiliation
-4. **Counter-intuitive findings** — What surprises people about this topic?
-5. **Failure cases** — What goes wrong and why?
-6. **Trend data** — How is this changing over time?
+**Tier 2 — Model Knowledge (fallback)**
+If web search is unavailable:
+- Use training knowledge, but **explicitly mark every piece of evidence** with:
+  - `"[Training knowledge] McKinsey ~2023: approximately 70%..."` — note the approximation
+  - Never present training knowledge as if it were a live, verified search result
+- Approximate figures are acceptable if clearly marked. Invented figures are never acceptable.
+
+**Tier 3 — Honest gap declaration**
+If no reliable data exists for a sub-topic (either via search or training):
+- Write exactly: `"No reliable data found"` or `"缺少可靠来源"`  
+- Do NOT invent plausible-sounding statistics
+- Do NOT use vague phrases: "studies show", "research indicates", "experts believe"
+
+### evidence field rules (apply to every slide)
+
+Every `evidence` field must be one of:
+1. `"[Source name + year]: [specific finding with number]"` — e.g., `"WHO 2023: 74% of AI healthcare pilots fail to scale"`
+2. `"[URL] ([date]): [key finding]"` — when web search returns a URL
+3. `"[Training knowledge] [Source ~year]: approximately [stat]..."` — when using model knowledge
+4. `"No reliable data found"` — honest gap declaration
+
+❌ Never: `"Many studies suggest..."` / `"According to research..."` / `"Experts agree..."`
 
 ### Research Output (RESEARCH BRIEF)
 
-Before generating slides, output a brief internal summary:
+After researching, summarize in one paragraph (internal planning, not shown to user):
 
 ```
-RESEARCH BRIEF (not shown to user):
-- Core tension: [the conflict or problem at the heart of this topic]
-- Strongest stat: [most credible, specific number you found]
+RESEARCH BRIEF:
+- Search method: [web search / training knowledge / mixed]
+- Core tension: [the conflict at the heart of this topic]
+- Strongest stat: [most credible, specific number + source]
 - Most surprising finding: [what subverts expectations]
 - Best case study: [specific named example]
-- Key expert: [named authority with credible quote or position]
-- Missing data: [where you couldn't find reliable numbers — say so]
+- Missing data: [where no reliable data was found]
 ```
 
 ### Research-Driven Story Rewrite
@@ -105,9 +125,7 @@ The user asked for a topic. The research found the real story. **Tell the real s
 Example:
 - User asks: "AI in healthcare"
 - Research finds: "74% of AI healthcare projects fail at scale — not because of algorithms, but because of workflow integration problems"
-- **Don't make a slide about AI capabilities. Make a slide deck about why most AI healthcare projects fail — and what the 26% do differently.**
-
-If you lack reliable data on a subtopic: write `"缺少可靠来源"` or `"No reliable data found"` in the `evidence` field. **Never invent numbers.**
+- **Don't make a slide about AI capabilities. Make a deck about why most AI healthcare projects fail — and what the 26% do differently.**
 
 ---
 
@@ -141,7 +159,7 @@ Enforce this arc structure:
 
 ## STORYBOARD (mandatory between LAYER 2 and JSON generation)
 
-Write a one-line entry for every slide in the deck before generating any JSON.
+Write a one-line entry for every slide. Then **copy this plan verbatim into the `storyboard_notes` field of the JSON** — not as chain-of-thought, but as visible, auditable output.
 
 **Format per slide:**
 ```
@@ -157,6 +175,17 @@ Write a one-line entry for every slide in the deck before generating any JSON.
 [5] insight     | climax     | electric    | single     | hero_statement  → "AI healthcare fails at organization, not technology"
 [6] cta         | close      | triumphant  | single     | —               → "Map the workflow first, then choose the model"
 ```
+
+**This storyboard goes into the JSON as:**
+```json
+{
+  "title": "...",
+  "storyboard_notes": "[1] hero | opening | serene | single | hero_statement → ...\n[2] big-stat | tension | charged | single | — → ...",
+  "slides": [...]
+}
+```
+
+**⚠️ Storyboard must be in the final JSON — hidden chain-of-thought alone is not acceptable.**
 
 **Storyboard verification checklist (fix before generating JSON):**
 
@@ -341,6 +370,7 @@ Slide 5: editorial | breathing-room | contemplative    ← contrast and pause
   "title": "string",
   "theme": "dark" | "light" | "brand",
   "style": "tech" | "scientific" | "artistic" | "business" | "linear",
+  "storyboard_notes": "One line per slide copied from STORYBOARD step",
   "slides": [Slide]
 }
 ```
@@ -356,19 +386,25 @@ Slide 5: editorial | breathing-room | contemplative    ← contrast and pause
   "density": "minimal" | "low" | "medium" | "high",
   "focus": "single" | "dual" | "grid" | "comparison" | "flow",
   "key_message": "The ONE thing this slide must communicate (10 words max)",
-  "evidence": "The real data/fact/case supporting this slide (or 'No reliable data found')"
+  "evidence": "Source name + year + finding, OR 'No reliable data found'",
+  "tension": "The specific conflict or unanswered question this slide creates",
+  "speaker_takeaway": "One sentence — what the presenter says out loud on this slide"
 }
 ```
 
-Optional metadata fields (include when relevant):
+Optional fields (include when structurally relevant):
 ```json
 {
-  "tension": "The conflict or question this slide raises",
   "dominant_element": "headline | stat | visual | quote",
-  "layout_intent": "hero_statement | evidence_board | architecture_map | narrative_pivot | breathing_pause",
-  "speaker_takeaway": "What the presenter says out loud on this slide"
+  "layout_intent": "hero_statement | evidence_board | architecture_map | narrative_pivot | breathing_pause"
 }
 ```
+
+**Field notes:**
+- `tension` — required on ALL slides, not just tension-scene slides. Every slide must create or resolve a tension.
+- `speaker_takeaway` — required. The one spoken sentence anchors each slide's purpose.
+- `layout_intent` — required when you want the renderer to apply structural override (see LAYER 4 table).
+- `evidence` — must include source attribution, NOT freeform text.
 
 ### Available layouts
 
