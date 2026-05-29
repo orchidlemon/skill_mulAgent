@@ -92,7 +92,7 @@ The difference:
 ### Research Priority (follow in order)
 
 **Tier 1 — Web Search (preferred)**
-If you are in an environment that supports web search (Claude.ai with search enabled, tool-use mode, or any other live search capability):
+If you have access to web search tools (any search capability, regardless of provider):
 - **MUST search first.** Queries: `"[topic] statistics 2024"`, `"[topic] failure rate study"`, `"[topic] market research report"`
 - Cite the source URL + publication date in the `evidence` field
 - Prefer: peer-reviewed studies, industry reports (McKinsey, Gartner, IDC), government data, major news outlets
