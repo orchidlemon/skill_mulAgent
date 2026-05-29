@@ -3,11 +3,11 @@ name: pptx-maker
 description: Generate high-end web-native slide decks. Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", "做一个demo".
 metadata:
   author: orchidlemon
-  version: "7.0.0"
+  version: "7.2.0"
   argument-hint: <topic or description>
 ---
 
-# Presentation Director OS — v7.0
+# Presentation Director OS — v7.2
 
 You are a **Presentation Director** running a multi-layer creative pipeline.
 
@@ -592,6 +592,94 @@ When set, everything else recedes visually:
 | `visual` | Icon fills its zone | All text becomes caption-weight |
 
 **Rule:** If you cannot name one dominant element on a slide → the slide lacks focus. Either delete elements until one dominates, or split into two slides.
+
+---
+
+## LAYER 8 — RENDERER GUARANTEE (What the engine enforces)
+
+> v7.2: The renderer runs a **Generate → Validate → Repair → Render** pipeline on every slide before painting a single pixel. These are executable constraints, not suggestions. If you violate them the engine will silently repair your output — which often degrades it. Generate correctly the first time.
+
+### Repair pass order (all 5 run on every slide)
+
+**Pass 1 — Single-focus strip**
+
+Layouts `hero`, `insight`, `quote`, `cta`, `hero_statement`, `quote_focus` are full-bleed statement slides.
+
+| Generated violation | Engine repair |
+|--------------------|---------------|
+| `items` on a hero slide | Silently dropped |
+| `bullets` on an insight slide | Silently dropped |
+| `density: "high"` on a hero/insight | Forced to `"minimal"` |
+
+→ **Never put items/bullets on single-focus layouts.** The engine cannot fix the lost content.
+
+**Pass 2 — Climax / revelation minimal enforcement**
+
+Slides with `scene_type: "climax"` or `scene_type: "revelation"`:
+
+| Generated violation | Engine repair |
+|--------------------|---------------|
+| `density: "high"` or `"medium"` | Forced to `"minimal"` |
+| `items` array with > 2 entries | Truncated to first 2 |
+| `bullets` array with > 3 entries | Truncated to first 2 |
+| `layout_family` is `card_cluster`, `dense_report`, or `evidence_board` | Auto-switched to `hero_statement` |
+
+→ **Climax = one idea, minimal density. Always.** Content beyond 2 items is silently cut.
+
+**Pass 3 — Layout capacity hard limits**
+
+| `layout_family` | Limit | Engine repair |
+|-----------------|-------|---------------|
+| `card_cluster` | ≤ 4 items | Switches to `dense_report` |
+| Any layout | > 6 items | Switches to `dense_report` |
+| Any layout | > 5 bullets | Truncated to 5 |
+
+→ **Generating 5 items for `card_cluster` will silently switch to `dense_report`** — a different visual entirely. Stay within capacity.
+
+**Pass 4 — Dominant element auto-inference**
+
+If `dominant_element` is absent, the engine infers:
+
+| Condition | Inferred `dominant_element` |
+|-----------|----------------------------|
+| Single-focus, climax, or `hero_statement` | `"headline"` |
+| `layout: "big-stat"` or evidence_board with metrics | `"stat"` |
+| `layout: "quote"` or `quote_focus` | `"quote_strip"` |
+
+→ **Set `dominant_element` explicitly.** Auto-inference is a fallback, not a feature.
+
+**Pass 5 — Content-length fit switch**
+
+| Mismatch | Engine repair |
+|----------|---------------|
+| `split_argument` with > 6 bullets | Switches to `dense_report` |
+| `dense_report` with ≤ 1 item, ≤ 1 bullet, no text | Switches to `hero_statement` |
+
+### Typography clamp (render-time hard cap)
+
+The renderer clamps font sizes regardless of what CSS the view component generates:
+
+| Element | Hard cap |
+|---------|----------|
+| `HeroStatementView` title | `clamp(1.8rem, 4.2vw, 3.75rem)` = **60px max** |
+| Standard slide title | Governed by `density` → `vt.titleClass` |
+
+`density: "minimal"` → larger title class  
+`density: "high"` → smaller, tighter title class
+
+→ **The font size cap is a runtime guarantee.** You cannot produce "poster syndrome" via content — only via wrong `density` values.
+
+### What the engine cannot fix
+
+| Problem | Why it can't be auto-repaired |
+|---------|-------------------------------|
+| Wrong `layout_family` for content type | The engine picks the right family for overflow, but not semantic fit. `process_flow` won't become `architecture_map` even if the content is a system diagram. |
+| Missing real evidence | The `evidence` field is passed through as-is. Invented statistics stay invented. |
+| Weak key_message | The engine does not rewrite text. Vague titles remain vague. |
+| Narrative arc violations | Two consecutive `climax` scenes stay as generated. |
+| Wrong `scene_type` | The engine uses `scene_type` as input; it does not validate story arc. |
+
+**These require correct generation, not repair.**
 
 ---
 
