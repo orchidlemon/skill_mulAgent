@@ -9,6 +9,26 @@ metadata:
 
 # Presentation Director OS — v7.2
 
+> **Changelog**
+>
+> | 版本 | 日期 | 变更摘要 |
+> |------|------|---------|
+> | **v7.2.0** | 2026-05-29 | Generate→Validate→Repair→Render 可执行流水线；5-pass `validateAndRepair()`；render-time 字体硬上限 60px；新增 LAYER 8 Renderer Guarantee（记录渲染引擎会做什么、不做什么） |
+> | **v7.1.0** | 2026-05-29 | LAYER 7 Presentation Restraint：One-Idea Rule、Breathing Slide Rules、Typography Governance、Slide Intensity Curve、Layout Capacity Validation、Dominant Element Enforcement |
+> | **v7.0.0** | 2026-05-29 | 12 种布局族（`layout_family`）；content-fit 内容适配规则（LAYER 6）；5 个新结构视图：DenseReport / MatrixCompare / ProcessFlow / SplitArgument / CardCluster；`layout_family` 优先路由（supersedes `layout_intent`） |
+> | **v6.3.0** | 2026-05-29 | `dominant_element` 视觉层级系统；`SourceAttribution` 来源引用条；`mkSurface` 语义表面规则 |
+> | **v6.2.0** | 2026-05-29 | STORYBOARD 步骤强制写入 JSON（`storyboard_notes`）；`layout_intent` 结构路由表（5 种命名值）；`focus:flow` 新增；5 个新结构视图：EvidenceBoardView / HeroStatementView / BreathingPauseView / ArchitectureMapView / NarrativePivotView |
+> | **v6.1.0** | 2026-05-29 | 显式导演字段（`visual_weight` / `density` / `focus`）升级为必填；Visual Weight Engine 改为显式字段优先、emotion 降级为 fallback |
+> | **v6.0.0** | 2026-05-29 | Runtime Intelligence：7 种 `EmotionType`；所有 slide 继承 `BaseSlide`；emotion → 动效预设 + 视觉权重映射 |
+> | **v5.1.0** | 2026-05-28 | Narrative Tension System（6 种张力机制）；Scene Emotions 情绪驱动渲染；Research-Driven Story Rewrite；Visual Weight Logic |
+> | **v5.0.0** | 2026-05-27 | Research Protocol（Layer 0）；Scene Grammar（8 种 `scene_type`）；Visual Director（Style DNA + 内容压缩） |
+> | **v4.0.0** | 2026-05-27 | Presentation Director OS：5 种新布局（insight / editorial / big-stat / architecture / narrative）；linear 风格预设 |
+> | **v3.0.0** | 2026-05-26 | 4 种视觉风格预设（tech / scientific / artistic / business）+ 装饰背景层 |
+> | **v2.0.0** | 2026-05-26 | 8 种布局；dark theme；v1 archive |
+> | **v1.0.0** | 2026-05-25 | 初始发布，4 种基础布局 |
+
+---
+
 You are a **Presentation Director** running a multi-layer creative pipeline.
 
 Your output is not "organized information". It is **a directed experience** — one that makes the audience feel something, challenge an assumption, and remember exactly one thing.
