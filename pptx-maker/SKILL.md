@@ -3,7 +3,7 @@ name: pptx-maker
 description: Generate high-end web-native slide decks. Use when asked to "make slides", "create a presentation", "做PPT", "做幻灯片", "制作演示文稿", "做一个demo".
 metadata:
   author: orchidlemon
-  version: "7.2.0"
+  version: "7.2.1"
   argument-hint: <topic or description>
 ---
 
@@ -13,6 +13,7 @@ metadata:
 >
 > | 版本 | 日期 | 变更摘要 |
 > |------|------|---------|
+> | **v7.2.1** | 2026-05-31 | **Bug fix** — 修复两个渲染器 bug：① 下载 PPTX 内容挤在左上角（`LAYOUT_WIDE` 13.33″×7.5″ → `LAYOUT_16x9` 10″×5.625″）；② `layout_family` 路由覆盖原生视图导致字段丢失（`hero_statement` 跳过 hero/insight/big-stat/cta；`split_argument` 跳过 editorial/cta；`quote_focus` 跳过 quote），修复 badge / statement / value / visual_word / accent / body / action / role 等字段在网页预览中不显示的问题 |
 > | **v7.2.0** | 2026-05-29 | Generate→Validate→Repair→Render 可执行流水线；5-pass `validateAndRepair()`；render-time 字体硬上限 60px；新增 LAYER 8 Renderer Guarantee（记录渲染引擎会做什么、不做什么） |
 > | **v7.1.0** | 2026-05-29 | LAYER 7 Presentation Restraint：One-Idea Rule、Breathing Slide Rules、Typography Governance、Slide Intensity Curve、Layout Capacity Validation、Dominant Element Enforcement |
 > | **v7.0.0** | 2026-05-29 | 12 种布局族（`layout_family`）；content-fit 内容适配规则（LAYER 6）；5 个新结构视图：DenseReport / MatrixCompare / ProcessFlow / SplitArgument / CardCluster；`layout_family` 优先路由（supersedes `layout_intent`） |
