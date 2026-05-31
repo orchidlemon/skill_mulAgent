@@ -13,7 +13,18 @@ skill_mulAgent/
 ├── system-prompts/      # 智能体系统提示词
 │   └── multica-assistant.md
 └── archive/             # 历史版本存档
-    └── pptx-maker-v2.0.0/
+    ├── pptx-maker-v1.0.0/
+    ├── pptx-maker-v2.0.0/
+    ├── pptx-maker-v5.1.0/
+    ├── pptx-maker-v6.0.0/
+    ├── pptx-maker-v6.1.0/
+    ├── pptx-maker-v6.2.0/
+    ├── pptx-maker-v6.3.0/
+    ├── pptx-maker-v7.0.0/
+    ├── pptx-maker-v7.1.0/
+    ├── pptx-maker-v7.2.0/
+    ├── pptx-maker-v7.2.1/
+    └── pptx-maker-v7.2.2/
 ```
 
 ---
@@ -22,7 +33,7 @@ skill_mulAgent/
 
 ### pptx-maker — 幻灯片生成
 
-**当前版本：** v7.2.0  
+**当前版本：** v7.2.2  
 **导入 URL：**
 ```
 https://github.com/orchidlemon/skill_mulAgent/blob/main/pptx-maker/SKILL.md
@@ -36,6 +47,7 @@ https://github.com/orchidlemon/skill_mulAgent/blob/main/pptx-maker/SKILL.md
 | 5 种视觉风格 | tech / scientific / artistic / business / linear |
 | 叙事导演系统 | 研究协议 → 叙事张力 → 场景语法 → 视觉导演 → 内容压缩 |
 | Validation + Repair Pipeline | 生成 → 验证 → 修复 → 渲染，所有规则编译为可执行约束 |
+| 下载 PPTX | 浏览器预览与 PowerPoint 文件保持布局一致 |
 
 ---
 
@@ -77,6 +89,8 @@ https://github.com/orchidlemon/skill_mulAgent/blob/main/html-designer/SKILL.md
 
 | 日期 | 版本 | 变更摘要 |
 |------|------|---------|
+| 2026-05-31 | pptx-maker **v7.2.2** | **Bug fix（渲染一致性）** — ① 时间线网页预览被截断：≥6 条目启用 compact 模式，≥8 条目隐藏描述；② 下载 PPTX 时间线超出页面：rowH 算法限制在 3.6″ 高度，自动省略放不下的描述；③ 下载布局与预览不一致：新增 6 个 v7 专属下载渲染器（`process_flow` 编号步骤、`matrix_compare` 表格对比、`dense_report` 双列、`card_cluster` 主卡布局、`split_argument` 60/40 分栏、`evidence_board` 来源引用条、`before_after` 玫瑰红/翠绿面板），下载器现在与浏览器预览保持一致 |
+| 2026-05-31 | pptx-maker **v7.2.1** | **Bug fix（内容丢失）** — ① 下载 PPTX 所有内容挤在左上角：`LAYOUT_WIDE`（13.33″×7.5″）→ `LAYOUT_16x9`（10″×5.625″）；② 浏览器预览字段丢失：`layout_family` 路由错误覆盖原生视图，`badge` / `statement` / `value` / `visual_word` / `accent` / `body` / `action` / `role` 等字段不显示，修复三条路由回退逻辑 |
 | 2026-05-29 | pptx-maker **v7.2.0** | Generate→Validate→Repair→Render 可执行流水线；5-pass validateAndRepair()；render-time 字体硬上限（60px）；LAYER 8 Renderer Guarantee |
 | 2026-05-29 | pptx-maker **v7.1.0** | LAYER 7 Presentation Restraint；Typography Governance 字体规范；Slide Intensity Curve；Layout Capacity Validation；Dominant Element Enforcement |
 | 2026-05-29 | pptx-maker **v7.0.0** | 12 种布局族（layout_family）；content-fit 内容适配规则；5 个新结构视图（DenseReport/MatrixCompare/ProcessFlow/SplitArgument/CardCluster）；layout_family 优先路由；LAYER 6 Content-Fit Rules |
